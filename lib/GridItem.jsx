@@ -57,6 +57,7 @@ type Props = {
   maxW: number,
   minH: number,
   maxH: number,
+  lockAspectRatio?: boolean,
   i: string,
 
   onDrag?: GridItemCallback<GridDragEvent>,
@@ -117,6 +118,8 @@ export default class GridItem extends React.Component<Props, State> {
       if (value < props.h || value < props.minH)
         return new Error("maxHeight smaller than item height/minHeight");
     },
+
+    lockAspectRatio: PropTypes.bool,
 
     // ID is nice to have for callbacks
     i: PropTypes.string.isRequired,
@@ -335,7 +338,7 @@ export default class GridItem extends React.Component<Props, State> {
     child: ReactElement<any>,
     position: Position
   ): ReactElement<any> {
-    const { cols, x, minW, minH, maxW, maxH } = this.props;
+    const { cols, x, minW, minH, maxW, maxH, lockAspectRatio } = this.props;
 
     // This is the max possible width - doesn't go to infinity because of the width of the window
     const maxWidth = this.calcPosition(0, 0, cols - x, 0).width;
@@ -354,6 +357,7 @@ export default class GridItem extends React.Component<Props, State> {
         height={position.height}
         minConstraints={minConstraints}
         maxConstraints={maxConstraints}
+        lockAspectRatio={lockAspectRatio}
         onResizeStop={this.onResizeHandler("onResizeStop")}
         onResizeStart={this.onResizeHandler("onResizeStart")}
         onResize={this.onResizeHandler("onResize")}
@@ -475,6 +479,7 @@ export default class GridItem extends React.Component<Props, State> {
         child.props.className,
         this.props.className,
         {
+          lockAspectRatio: this.props.lockAspectRatio,
           static: this.props.static,
           resizing: Boolean(this.state.resizing),
           "react-draggable": isDraggable,
